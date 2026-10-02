@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>B站多账号切换</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="bar">
+        <h1 class="bar__title">B站多账号<wbr />切换</h1>
+        <p class="bar__count mono" id="count">读取中…</p>
+      </header>
+
+      <section class="live" aria-labelledby="live-heading">
+        <h2 class="live__heading mono" id="live-heading">当前登录身份</h2>
+        <div class="live__body">
+          <span class="face" id="live-face" hidden></span>
+          <div class="live__text">
+            <p class="live__name" id="live-name">读取中…</p>
+            <p class="live__meta mono" id="live-meta"></p>
+          </div>
+        </div>
+        <div class="live__actions">
+          <button class="btn btn--primary" id="save" type="button">保存当前账号</button>
+          <button class="btn" id="update" type="button" disabled>更新快照</button>
+          <button
+            class="btn btn--wide"
+            id="park"
+            type="button"
+            title="先保存当前账号，然后只清掉浏览器里的登录凭据（不会注销 B 站服务端会话），让你在同一浏览器里登录下一个账号"
+          >
+            添加下一个账号
+          </button>
+        </div>
+      </section>
+
+      <p class="status mono" id="status" role="status" aria-live="polite"></p>
+
+      <section class="list" aria-labelledby="list-heading">
+        <h2 class="section-title mono" id="list-heading">
+          <span>已保存 <span id="list-count">0</span></span>
+          <span class="section-title__hint">点整行即切换</span>
+        </h2>
+        <ul class="accounts" id="accounts"></ul>
+        <p class="empty" id="empty" hidden>
+          <strong>还没有保存任何账号。</strong>
+          <span>
+            ① 在 B 站网页登录第一个账号 → 点「保存当前账号」；
+            ② 点「添加下一个账号」→ 在同一个浏览器里登录第二个账号 → 再点「保存当前账号」；
+            ③ 之后点账号那一行就能切回来。
+          </span>
+          <span class="empty__warn">
+            <strong>换账号别点网页上的「退出登录」。</strong>
+            B 站会走 passport 的 /login/exit/v2，<em>在服务端注销</em>那个账号的登录 Token，
+            已保存的快照当场作废、切回去还是未登录。用「添加下一个账号」代替。
+          </span>
+          <span class="empty__note mono">每个账号各自独立保存 SESSDATA / bili_jct / DedeUserID / sid</span>
+        </p>
+      </section>
+
+      <footer class="foot">
+        <button class="btn btn--mini" id="export" type="button">导出</button>
+        <button class="btn btn--mini" id="import" type="button">导入</button>
+        <input
+          type="file"
+          id="import-file"
+          accept="application/json,.json"
+          aria-label="选择要导入的账号 JSON 文件"
+          hidden
+        />
+        <button class="btn btn--mini" id="settings-toggle" type="button" aria-expanded="false" aria-controls="settings">
+          设置
+        </button>
+        <button class="btn btn--mini" id="diagnose" type="button" aria-expanded="false" aria-controls="reportwrap">
+          诊断
+        </button>
+        <p class="foot__ver mono" id="version"></p>
+      </footer>
+
+      <section class="settings" id="settings" aria-label="设置" hidden>
+        <label class="check">
+          <input type="checkbox" data-setting="autoSync" />
+          <span>切换前自动刷新当前账号快照</span>
+          <span class="check__note">SESSDATA 会轮换，不刷新的话下次切回来可能已失效</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" data-setting="autoReload" />
+          <span>切换后自动刷新 B 站标签页</span>
+          <span class="check__note">关掉则已打开的页面要手动刷新才换身份</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" data-setting="switchDevice" />
+          <span>连设备指纹一起切换</span>
+          <span class="check__note">buvid3/buvid4 等按账号隔离，隔离更彻底但更易触发风控</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" data-setting="showBadge" />
+          <span>在扩展图标上显示当前账号首字</span>
+          <span class="check__note">一眼看出当前是哪个账号</span>
+        </label>
+      </section>
+
+      <section class="reportwrap" id="reportwrap" aria-label="诊断报告" hidden>
+        <pre class="report mono" id="report"></pre>
+        <button class="btn btn--mini" id="copy-report" type="button">复制报告</button>
+      </section>
+    </main>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

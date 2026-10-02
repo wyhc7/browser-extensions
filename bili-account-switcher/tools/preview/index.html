@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>popup 预览（开发用）</title>
+    <link rel="stylesheet" href="../../extension/src/popup.css" />
+    <style>
+      /* 让截图只由弹窗本身占据，便于用 measure.mjs 量亮度 */
+      html {
+        background: var(--paper);
+      }
+      body {
+        margin: 0 auto;
+      }
+    </style>
+    <script src="mock-chrome.js"></script>
+  </head>
+  <body>
+    <script type="module">
+      const params = new URLSearchParams(location.search);
+
+      // 把 popup.css 里的暗色块抽出来，用 ?theme=dark 强制启用 —— 避免为了预览复制一份配色
+      if (params.get("theme") === "dark") {
+        const css = await (await fetch("../../extension/src/popup.css")).text();
+        const dark = css.match(/@media \(prefers-color-scheme: dark\)\s*\{([\s\S]*?)\n\}/);
+        if (dark) {
+          const style = document.createElement("style");
+          style.textContent = dark[1];
+          document.head.append(style);
+        }
+      }
+
+      // 复用真实弹窗的 DOM，不复制一份标记，避免与 popup.html 漂移
+      const html = await (await fetch("../../extension/src/popup.html")).text();
+      const parsed = new DOMParser().parseFromString(html, "text/html");
+      document.body.innerHTML = parsed.body.innerHTML;
+      document.body.className = parsed.body.className;
+
+      // ?state=empty / ?state=dead 由 mock-chrome.js 在数据层实现 ——
+      // 在这里改 DOM 会被 popup.js 的首次 render() 立刻覆盖。
+      await import("../../extension/src/popup.js");
+    </script>
+  </body>
+</html>

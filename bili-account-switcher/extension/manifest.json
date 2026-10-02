@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "B站多账号切换",
+  "version": "1.2.0",
+  "description": "一键保存并切换 bilibili.com 的多个账号登录态，无需反复登出重登。",
+  "minimum_chrome_version": "102",
+  "permissions": ["cookies", "storage"],
+  "host_permissions": ["*://*.bilibili.com/*", "*://bilibili.com/*"],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "B站多账号切换",
+    "default_popup": "src/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

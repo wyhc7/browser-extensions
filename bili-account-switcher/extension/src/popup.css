@@ -1,0 +1,615 @@
+/*
+ * 方向：Brutalist（结构外露、零圆角、硬阴影零模糊、3px 描边）。
+ * 唯一品牌材料是 B 站粉 #FB7299 —— 作为全局唯一强调色使用。
+ * 无网络字体依赖（弹窗冷启动、无 CLS），仅系统字族 + 等宽字族两族。
+ */
+:root {
+  color-scheme: light dark;
+
+  --paper: #ffffff;
+  --ink: #000000;
+  --line: #000000;
+  --muted: #5c5c5c;
+  --accent: #fb7299;
+  --accent-ink: #000000;
+  --ghost: rgba(0, 0, 0, 0.06);
+  --shadow-sm: 2px 2px 0 var(--line);
+  --shadow: 4px 4px 0 var(--line);
+
+  --border: 3px solid var(--line);
+  --font-ui: system-ui, "Segoe UI", "Microsoft YaHei", sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* 深色纸面用 #121212 而不是纯 #000：纯黑在深色浏览器 UI 上像一块洞，
+       而且白字压在纯黑上会出现光晕（halation）。白墨 / 白描边保持不变。 */
+    --paper: #121212;
+    --ink: #ffffff;
+    --line: #ffffff;
+    --muted: #a8a8a8;
+    --ghost: rgba(255, 255, 255, 0.12);
+    --shadow-sm: 2px 2px 0 var(--line);
+    --shadow: 4px 4px 0 var(--line);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  border-radius: 0;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  width: 400px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+/* ---------------------------------------------------------------- 顶栏 */
+
+.bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px 10px;
+  border-bottom: var(--border);
+}
+
+.bar__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+.bar__count {
+  margin: 0;
+  color: var(--muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------ 当前身份 */
+
+.live {
+  padding: 12px 14px 14px;
+  border-bottom: var(--border);
+  /* 底边的刻度条：结构外露，不是装饰性渐变 */
+  background-image: linear-gradient(90deg, var(--ghost) 0 1px, transparent 1px 12px);
+  background-size: 12px 6px;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+}
+
+.live__heading,
+.section-title {
+  margin: 0 0 8px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.live__body {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.face {
+  display: block;
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--line);
+  background: var(--accent);
+  overflow: hidden;
+}
+
+.face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.face--initial {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent-ink);
+  background: var(--accent);
+}
+
+.live__name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.live__meta {
+  margin: 2px 0 0;
+  color: var(--muted);
+}
+
+.tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 5px;
+  border: 2px solid var(--line);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  vertical-align: 2px;
+}
+
+.tag--active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--line);
+}
+
+.live__actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* 第二次换号才是常态：这个入口占满整行，跟"保存"一样显眼 */
+.btn--wide {
+  grid-column: 1 / -1;
+}
+
+/* ---------------------------------------------------------------- 按钮 */
+
+.btn {
+  min-height: 44px;
+  padding: 0 12px;
+  border: var(--border);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: background-color 120ms linear, color 120ms linear, box-shadow 90ms linear,
+    transform 90ms linear;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--line);
+}
+
+.btn:disabled {
+  color: var(--muted);
+  border-style: dashed;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: var(--shadow);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn--mini {
+  min-height: 34px;
+  padding: 0 10px;
+  font-size: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn--danger {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn--danger:hover:not(:disabled) {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.btn--icon {
+  min-width: 44px;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* 焦点环必须是真 outline：用 box-shadow 顶替会在高对比模式下消失 */
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------- 状态行 */
+
+.status {
+  margin: 0;
+  min-height: 0;
+  padding: 0 14px;
+  border-bottom: 0 solid var(--line);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.status:not(:empty) {
+  padding: 8px 14px;
+  border-bottom-width: 3px;
+}
+
+.status--ok::before {
+  content: "OK — ";
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.status--error {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.status--error::before {
+  content: "! ";
+  font-weight: 700;
+}
+
+/* 切换成功时唯一的一处编排动效：整块"盖章"落下 */
+.status--stamp {
+  animation: stamp 260ms steps(3, end) 1;
+}
+
+@keyframes stamp {
+  from {
+    transform: scale(1.03) translateY(-3px);
+  }
+  to {
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ------------------------------------------------------------ 账号列表 */
+
+.list {
+  padding: 12px 14px 14px;
+}
+
+.section-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.section-title__hint {
+  color: var(--muted);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.accounts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 316px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  border: var(--border);
+}
+
+.account {
+  border-bottom: var(--border);
+}
+
+.account:last-child {
+  border-bottom: 0;
+}
+
+.account--active {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.account__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 8px;
+}
+
+/* 整行就是"切换"这个动作本身：主操作占满一行，操作数少的按钮退到 ⋯ 里 */
+.account__main {
+  display: grid;
+  grid-template-columns: 20px 36px 1fr;
+  gap: 6px;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.account__main:disabled {
+  cursor: default;
+}
+
+/* 悬停整行反白，就是"这一行可以点"的全部提示 */
+.account__main:not(:disabled):hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.account__order {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.account--active .account__order,
+.account--active .account__meta {
+  color: var(--accent-ink);
+}
+
+/* 当前账号整行铺了品牌粉，标签要反过来才看得清 */
+.account--active .tag {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.account__face {
+  width: 36px;
+  height: 36px;
+  border-width: 2px;
+}
+
+.account__text {
+  min-width: 0;
+}
+
+.account__name {
+  display: block;
+  margin: 0;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.account__meta {
+  display: block;
+  margin: 1px 0 0;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 上次切这家失败过：B 站已经拒绝这份凭据，客户修不了，只能重新登录并覆盖快照 */
+.account__warn {
+  display: block;
+  margin: 4px 0 0;
+  padding-left: 8px;
+  font-weight: 700;
+  border-left: 6px solid var(--line);
+}
+
+.account--rejected .account__main {
+  border-style: dashed;
+}
+
+.account__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 8px 10px 76px;
+}
+
+.account__detail {
+  flex: 1 0 100%;
+  color: var(--muted);
+}
+
+.account--active .account__detail {
+  color: var(--accent-ink);
+}
+
+.account__detail--warn {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.account__actions[hidden] {
+  display: none;
+}
+
+.rename {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 8px 10px 76px;
+}
+
+.rename__input {
+  min-height: 44px;
+  padding: 0 8px;
+  border: var(--border);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.empty {
+  margin: 0;
+  padding: 12px;
+  border: var(--border);
+  background: var(--paper);
+  display: grid;
+  gap: 6px;
+}
+
+.empty[hidden] {
+  display: none;
+}
+
+.empty strong {
+  font-size: 13px;
+}
+
+.empty__note {
+  color: var(--muted);
+}
+
+/* 这条是"为什么切不过去"的答案，用结构（竖条）加重，不用颜色堆叠 */
+.empty__warn {
+  padding-left: 8px;
+  border-left: 6px solid var(--accent);
+}
+
+.empty__warn em {
+  font-style: normal;
+  font-weight: 700;
+}
+
+kbd {
+  padding: 0 4px;
+  border: 2px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+/* ---------------------------------------------------------------- 页脚 */
+
+.foot {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 0 14px 14px;
+}
+
+/* 版本号要一眼可见：排查问题时先确认跑的是哪一版 */
+.foot__ver {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.2;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* ------------------------------------------------------------ 诊断报告 */
+
+.reportwrap {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px 14px;
+  border-top: var(--border);
+}
+
+.reportwrap[hidden] {
+  display: none;
+}
+
+.report {
+  margin: 0;
+  max-height: 220px;
+  overflow: auto;
+  padding: 10px;
+  border: var(--border);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 11px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.settings {
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px 14px;
+  border-top: var(--border);
+}
+
+.settings[hidden] {
+  display: none;
+}
+
+.check {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 8px 6px;
+  align-items: start;
+  cursor: pointer;
+}
+
+.check input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.check > span:first-of-type {
+  font-weight: 700;
+}
+
+.check__note {
+  grid-column: 2;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+
+  .btn:active:not(:disabled) {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .status--stamp {
+    animation: none;
+  }
+}

@@ -1,0 +1,3 @@
+# 统一行尾：仓库里存 LF，取出来也是 LF，避免不同平台反复产生整文件 diff。
+# PNG 等二进制由 text=auto 自动识别，不受影响。
+* text=auto eol=lf

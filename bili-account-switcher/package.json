@@ -1,0 +1,12 @@
+{
+  "name": "bili-account-switcher",
+  "version": "1.2.0",
+  "private": true,
+  "description": "B 站网页多账号切换浏览器扩展（开发工程目录）",
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "icons": "node tools/make-icons.mjs",
+    "verify": "node tools/verify.mjs"
+  }
+}

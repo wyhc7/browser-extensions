@@ -1,0 +1,18 @@
+# 依赖与构建产物（本项目零依赖，正常不该出现）
+node_modules/
+package-lock.json
+
+# 验证脚本的临时目录：profile 副本、探针报告、日志（可能含真实登录凭据）
+.tmp/
+
+# 打包产物与私钥
+*.crx
+*.pem
+
+# 日志与编辑器
+*.log
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store

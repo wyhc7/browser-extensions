@@ -1,0 +1,31 @@
+# CI 只跑"不需要浏览器、不需要你的登录态"的那两道门：
+# 单测（含 service worker 的端到端 mock）与交付前自检。
+#
+# 真引擎探针（tools/probe）与真机端到端（tools/e2e）刻意不进 CI：它们要在真实
+# 浏览器里用真实账号跑，既不可移植也不该把登录态放到 CI 上。
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["20", "22"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: 单测
+        working-directory: bili-account-switcher
+        run: npm test
+      - name: 交付前自检
+        working-directory: bili-account-switcher
+        run: npm run verify

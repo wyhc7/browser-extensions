@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "bili cookie round-trip probe",
+  "version": "1.0.0",
+  "description": "在真实 Chromium 引擎里验证 extension/src/lib/accounts.js 生成的 Cookie details 是否被接受。由 tools/probe/run.mjs 暂存后加载，不属于扩展本体。",
+  "minimum_chrome_version": "102",
+  "permissions": ["cookies", "storage"],
+  "host_permissions": ["*://*.bilibili.com/*", "*://bilibili.com/*"],
+  "background": { "service_worker": "sw.js", "type": "module" }
+}
