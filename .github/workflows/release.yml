@@ -1,0 +1,75 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 出包前先跑交付前自检：自检不过就不该有包流出去
+      - name: 单测
+        working-directory: bili-account-switcher
+        run: npm test
+
+      - name: 交付前自检
+        working-directory: bili-account-switcher
+        run: npm run verify
+
+      # 每个扩展的产物就是它的 extension/ 目录本身（零构建）。
+      # 打成 zip 时把 manifest.json 放在压缩包根，解压出来那层目录就能直接"加载已解压的扩展程序"。
+      - name: 打包所有扩展
+        run: |
+          mkdir -p dist
+          root="$PWD"
+          for m in */extension/manifest.json; do
+            dir=$(dirname "$(dirname "$m")")
+            name=$(basename "$dir")
+            ver=$(node -p "require('./$m').version")
+            (cd "$dir/extension" && zip -qr "$root/dist/${name}-${ver}.zip" .)
+          done
+          ls -l dist/
+
+      - name: 校验 tag 版本
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        run: |
+          tagver="${GITHUB_REF_NAME#v}"
+          hit=0
+          for m in */extension/manifest.json; do
+            [ "$(node -p "require('./$m').version")" = "$tagver" ] && hit=1
+          done
+          if [ "$hit" = 0 ]; then
+            echo "::error::tag ${GITHUB_REF_NAME} 的版本号和所有扩展的 manifest 都对不上；先改 manifest 的 version 再打 tag"
+            exit 1
+          fi
+
+      - name: Upload artifacts (手动触发)
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: extensions
+          path: dist/*.zip
+
+      - name: Attach to GitHub Release
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          generate_release_notes: true
+          body: |
+            下载 zip 解压，在 `chrome://extensions`（Edge 是 `edge://extensions`）开开发者模式，
+            **加载已解压的扩展程序**，选解压出来的那层目录。
+
+            注意：解压加载的扩展 ID 由**解压目录的绝对路径**推导，换个路径解压就等于换了个扩展，
+            之前存的账号看不到（仓库 README 里有搬迁存储的办法）。

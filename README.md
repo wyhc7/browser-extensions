@@ -6,6 +6,16 @@
 | --- | --- | --- | --- |
 | B站多账号切换 | 保存多个 bilibili 账号的登录态，点一下切换，不用反复登出重登 | [`bili-account-switcher/`](bili-account-switcher/) | 可用，v1.2.0 |
 
+## 怎么装
+
+**直接下载**：到 [Releases](https://github.com/wyhc7/browser-extensions/releases) 下
+`bili-account-switcher-<版本>.zip`，解压后在 `chrome://extensions`（Edge 是 `edge://extensions`）
+开开发者模式 → **加载已解压的扩展程序** → 选解压出来的那层目录。
+
+**或者从源码**：clone 后直接选 `<扩展名>/extension/`，见下面"怎么用"。
+
+解压路径决定扩展 ID（见"跨扩展共用的东西"），所以**别随手换地方解压**，换了就看不到之前存的账号。
+
 ## 怎么用
 
 每个扩展都是**自包含**的：进去看它自己的 `README.md`。共同点是都只要浏览器原生能力，没有构建步骤 ——
@@ -14,6 +24,8 @@
 
 改完代码记得在扩展页点一次**刷新**：Chromium 会缓存扩展 service worker 的脚本字节，
 不刷新的话浏览器还在跑旧代码。
+
+打 tag（`v<版本>`）会先跑单测与自检，过了才把每个扩展的 `extension/` 打成 zip 挂到 Releases。
 
 ## 目录约定
 
