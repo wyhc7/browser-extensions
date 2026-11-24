@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "多站点自动签到助手 (Multi-Site Auto Checkin)",
+  "version": "2.0.0",
+  "description": "支持多个站点、多个账号的自动签到 Chrome 扩展。每个账号使用独立 Cookie，互不干扰，可同时管理同一站点的多个账号。",
+  "permissions": [
+    "alarms",
+    "storage",
+    "notifications",
+    "declarativeNetRequest",
+    "scripting",
+    "tabs",
+    "cookies"
+  ],
+  "host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "action": {
+    "default_title": "多站点签到助手"
+  },
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  }
+}

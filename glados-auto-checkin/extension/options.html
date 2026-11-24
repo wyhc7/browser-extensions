@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>多站点签到助手 - 设置</title>
+  <style>
+    :root {
+      --bg: #1e2030; --card: #292b3d; --card2: #32354a; --accent: #7c8cff;
+      --accent2: #56d4a0; --danger: #ff6b81; --text: #e8e9f3; --muted: #9aa0b8;
+      --border: #3c3f57;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Roboto, sans-serif;
+      margin: 0; padding: 24px; background: var(--bg); color: var(--text);
+      font-size: 14px; line-height: 1.6;
+    }
+    .wrap { max-width: 900px; margin: 0 auto; }
+    h1 { font-size: 20px; margin: 0 0 4px; }
+    .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 20px; margin-bottom: 18px;
+    }
+    .card h2 { font-size: 15px; margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
+    label { font-size: 13px; color: var(--muted); }
+    input[type=text], input[type=password], input[type=number], select, textarea {
+      width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--card2); color: var(--text); font-size: 13px; font-family: inherit;
+    }
+    textarea { resize: vertical; min-height: 64px; font-family: ui-monospace, Menlo, monospace; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .row > div { flex: 1; min-width: 160px; }
+    .full { flex-basis: 100%; }
+    button {
+      cursor: pointer; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--card2); color: var(--text); font-size: 13px; transition: all .15s;
+    }
+    button:hover { border-color: var(--accent); }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+    button.green { background: var(--accent2); border-color: var(--accent2); color: #0b2e22; font-weight: 600; }
+    button.danger { background: transparent; border-color: var(--danger); color: var(--danger); }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* 账号卡片 */
+    .acc {
+      background: var(--card2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; margin-bottom: 12px;
+    }
+    .acc-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .acc-title { font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .pill { font-size: 11px; padding: 2px 8px; border-radius: 20px; background: #3a3d57; color: var(--muted); }
+    .pill.on { background: rgba(86,212,160,.15); color: var(--accent2); }
+    .pill.off { background: rgba(255,107,129,.15); color: var(--danger); }
+    .acc-stats { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin: 8px 0; }
+    .acc-stats b { color: var(--accent); font-family: monospace; }
+    .acc-logs { margin-top: 8px; font-size: 12px; max-height: 120px; overflow-y: auto; }
+    .acc-logs div { padding: 2px 0; border-bottom: 1px dashed var(--border); color: var(--muted); }
+    .acc-cal { margin: 10px 0; }
+    .cal-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
+    .cal-cell { background: #22243a; border: 1px solid var(--border); border-radius: 6px; padding: 4px 2px; text-align: center; display: flex; flex-direction: column; }
+    .cal-cell.checked { background: rgba(86,212,160,.18); border-color: var(--accent2); }
+    .cal-cell.today { box-shadow: 0 0 0 1.5px var(--accent); }
+    .cal-date { font-size: 9px; color: var(--muted); line-height: 1.2; }
+    .cal-pts { font-size: 10px; font-weight: 700; color: var(--accent2); }
+    .cal-cell:not(.checked) .cal-pts { color: #4a4d66; }
+    .empty { color: var(--muted); text-align: center; padding: 24px; font-size: 13px; }
+    .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    code { background: #1a1c2b; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+    details summary { cursor: pointer; color: var(--muted); font-size: 12px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🔔 多站点 · 多账号自动签到助手</h1>
+    <div class="sub">每个账号使用独立 Cookie，互不干扰，可同时管理同一站点的多个账号。所有数据仅保存在本地浏览器。</div>
+
+    <!-- 全局设置 -->
+    <div class="card">
+      <h2>⚙️ 全局设置</h2>
+      <div class="row">
+        <div class="full">
+          <label style="display:flex;align-items:center;gap:8px;height:38px;">
+            <input type="checkbox" id="notifyToggle" style="width:auto;"> 开启桌面结果通知
+          </label>
+        </div>
+      </div>
+      <div class="hint">✅ 每天<b>首次打开浏览器</b>时自动为所有启用账号签到（今日已签则跳过）。无需设定固定时间。</div>
+      <div class="btn-row" style="margin-top:14px;">
+        <button class="primary" id="saveSettings">保存设置</button>
+        <button class="green" id="testAll">手动测试全部账号</button>
+      </div>
+    </div>
+
+    <!-- 添加账号 -->
+    <div class="card">
+      <h2>➕ 添加账号（GLaDOS · 支持多个后缀）</h2>
+      <div class="row">
+        <div>
+          <label>账号备注名</label>
+          <input type="text" id="accName" placeholder="例如：账号A / 主号">
+        </div>
+        <div>
+          <label>站点后缀（可下拉选择或自定义）</label>
+          <select id="suffixSelect"></select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="full">
+          <label>站点地址（Base URL，支持任意 GLaDOS 后缀）</label>
+          <input type="text" id="accBaseUrl" placeholder="https://glados.cloud">
+          <div class="hint">同一后缀可添加多个账号（Cookie 隔离）；不同账号也可分布在不同的 GLaDOS 后缀。</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="full">
+          <label>Cookie（登录该后缀站点后，F12→Application→Cookies 复制；或直接粘贴整段 Cookie 头）</label>
+          <textarea id="accCookie" placeholder="koa:sess=xxxxx; koa:sess.sig=yyyyy"></textarea>
+        </div>
+      </div>
+      <details>
+        <summary>高级选项</summary>
+        <div class="row" style="margin-top:10px;">
+          <div class="full">
+            <label style="display:flex;align-items:center;gap:8px;">
+              <input type="checkbox" id="accNative" style="width:auto;">
+              启用 GLaDOS 原生页面点击兜底（Cookie 直连失败时，尝试在真实页面点击签到按钮）
+            </label>
+          </div>
+        </div>
+      </details>
+      <div class="btn-row" style="margin-top:14px;">
+        <button class="primary" id="addAccBtn">添加账号</button>
+        <span class="hint" id="addHint"></span>
+      </div>
+    </div>
+
+    <!-- 账号列表 -->
+    <div class="card">
+      <h2>👥 已添加账号 <span class="pill" id="accCount">0</span></h2>
+      <div id="accList"></div>
+    </div>
+
+    <!-- 全局历史 -->
+    <div class="card">
+      <h2>📅 全局签到日志（最近 200 条）</h2>
+      <div id="globalHistory" class="acc-logs" style="max-height:220px;"></div>
+    </div>
+  </div>
+  <script type="module" src="options.js"></script>
+</body>
+</html>

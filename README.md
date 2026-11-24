@@ -5,6 +5,7 @@
 | 扩展 | 作用 | 目录 | 状态 |
 | --- | --- | --- | --- |
 | B站多账号切换 | 保存多个 bilibili 账号的登录态，点一下切换，不用反复登出重登 | [`bili-account-switcher/`](bili-account-switcher/) | 可用，v1.2.0 |
+| GLaDOS 多后缀多账号签到 | 每天首次打开浏览器自动为多个 GLaDOS 账号签到；支持多后缀、每账号独立 Cookie | [`glados-auto-checkin/`](glados-auto-checkin/) | 可用，v2.0.0 |
 
 ## 怎么装
 
